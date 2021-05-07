@@ -29,7 +29,7 @@ int main(int argc, char** argv){
 
         getnameinfo(i->ai_addr, i->ai_addrlen, host, NI_MAXHOST, nullptr, NI_MAXSERV, NI_NUMERICHOST);
 
-        std::cout << host << " " << i->ai_family << " " << i->ai_socktype << "\n";
+        std::cout << host << "\t" << i->ai_family << "\t" << i->ai_socktype << "\n";
     }
 
     return 0;
