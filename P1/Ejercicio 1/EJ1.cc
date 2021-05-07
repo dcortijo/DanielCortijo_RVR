@@ -8,7 +8,7 @@ int main(int argc, char** argv){
     
     if(argc < 2)
     {
-        std::cout << "Formato incorrecto: EJ1 <dirección>\n";
+        std::cout << "Formato incorrecto: ./gai <dirección>\n";
         return -1;
     }
     
