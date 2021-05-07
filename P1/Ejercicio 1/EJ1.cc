@@ -12,17 +12,25 @@ int main(int argc, char** argv){
         return -1;
     }
     
-    struct addrinfo hints;
     struct addrinfo * res;
 
-    memset((void *)&hints, 0, sizeof(addrinfo));
+    // hints innecesario, ay que no se quiere especificar nada en concreto
+    int rc = getaddrinfo(argv[1], nullptr, nullptr, &res);
 
-    hints.ai_family = AF_INET;
-    hints.ai_socktype = SOCK_STREAM;
+    if (rc != 0)
+    {
+        std::cerr << "[getaddrinfo] " << gai_strerror(rc) << "\n";
+        return -1;
+    }
 
-    int rc = getaddrinfo(argv[1], nullptr, &hints, &res);
+    for(auto i = res; i != nullptr; i = i->ai_next)
+    {
+        char host[NI_MAXHOST];
 
-    
+        getnameinfo(i->ai_addr, i->ai_addrlen, host, NI_MAXHOST, nullptr, NI_MAXSERV, NI_NUMERICHOST);
+
+        std::cout << host << " " << i->ai_family << " " << i->ai_socktype << "\n";
+    }
 
     return 0;
 }
