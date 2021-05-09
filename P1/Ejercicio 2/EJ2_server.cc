@@ -42,7 +42,7 @@ int main(int argc, char** argv){
 
     freeaddrinfo(res);
 
-    char buffer[1];
+    char buffer[80];
 
     char host[NI_MAXHOST];
     char serv[NI_MAXSERV];
@@ -50,7 +50,7 @@ int main(int argc, char** argv){
     struct sockaddr cliente;
     socklen_t       clientelength = sizeof(struct sockaddr);
 
-    int bytes = recvfrom(sd, (void*) buffer, 1, 0, &cliente, &clientelength);
+    int bytes = recvfrom(sd, (void*) buffer, 80, 0, &cliente, &clientelength);
 
     if(bytes == -1)
     {
@@ -88,7 +88,7 @@ int main(int argc, char** argv){
                 break;
         }
 
-        int bytes = recvfrom(sd, (void*) buffer, 1, 0, &cliente, &clientelength);
+        int bytes = recvfrom(sd, (void*) buffer, 80, 0, &cliente, &clientelength);
 
         if(bytes == -1)
         {
