@@ -4,6 +4,7 @@
 #include <string.h>
 #include <iostream>
 #include <time.h>
+#include <unistd.h>
 
 int main(int argc, char** argv){
     
@@ -74,13 +75,23 @@ int main(int argc, char** argv){
             case 't':
                 {
                 timesize = strftime(timebuf, 255, "%X %p", info);
-                sendto(sd, timebuf, timesize, 0, &cliente, clientelength);
+                timebuf[timesize] = '\0';
+                if(sendto(sd, timebuf, timesize + 1, 0, &cliente, clientelength) < 0)
+                {
+                    std::cout << "Error enviando mensaje\n";
+                    return -1;
+                };
                 }
                 break;
             case 'd':
                 {
                 timesize = strftime(timebuf, 255, "%Y-%m-%d", info);
-                sendto(sd, timebuf, timesize, 0, &cliente, clientelength);
+                timebuf[timesize] = '\0';
+                if(sendto(sd, timebuf, timesize + 1, 0, &cliente, clientelength) < 0)
+                {
+                    std::cout << "Error enviando mensaje\n";
+                    return -1;
+                };
                 }
                 break;
             default:
@@ -101,6 +112,8 @@ int main(int argc, char** argv){
     }
 
     std::cout << "Saliendo...\n";
+
+    close(sd);
 
     return 0;
 }
