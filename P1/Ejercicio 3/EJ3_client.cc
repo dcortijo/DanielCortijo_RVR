@@ -23,7 +23,7 @@ int main(int argc, char** argv){
     //hints.ai_protocol = SOCK_DGRAM;
     hints.ai_socktype = SOCK_DGRAM;
 
-    int rc = getaddrinfo(argv[1], "2557", &hints, &res);    //Socket arbitrario
+    int rc = getaddrinfo(argv[1], argv[2], &hints, &res);    
 
     if (rc != 0)
     {
@@ -39,15 +39,8 @@ int main(int argc, char** argv){
         return -1;
     }
 
-    bind(sd, res->ai_addr, res->ai_addrlen);
 
-    freeaddrinfo(res);
-
-    struct addrinfo * ser;
-
-    int rs = getaddrinfo(argv[1], argv[2], &hints, &ser);
-
-    if(sendto(sd, argv[3], 1, 0, ser->ai_addr, ser->ai_addrlen) < 0)
+    if(sendto(sd, argv[3], 1, 0, res->ai_addr, res->ai_addrlen) < 0)
     {
         std::cout << "Error enviando mensaje\n";
         return -1;
@@ -55,7 +48,7 @@ int main(int argc, char** argv){
 
     char buffer[80];
 
-    if(recvfrom(sd, (void*) buffer, 80, 0, ser->ai_addr, &ser->ai_addrlen) < 0)
+    if(recvfrom(sd, (void*) buffer, 80, 0, res->ai_addr, &res->ai_addrlen) < 0)
     {
         std::cout << "Error en revfrom\n";
         return -1;
@@ -64,7 +57,7 @@ int main(int argc, char** argv){
     std::cout << buffer << "\n";
 
     close(sd);
-    freeaddrinfo(ser);
+    freeaddrinfo(res);
 
     return 0;
 }
