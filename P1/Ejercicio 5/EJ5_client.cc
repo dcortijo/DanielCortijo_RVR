@@ -55,13 +55,13 @@ int main(int argc, char** argv){
 
         if(strcmp(buffer, "Q\0") == 0) break;
 
-        if(sendto(sd, buffer, strlen(buffer), 0, res->ai_addr, res->ai_addrlen) < 0)
+        if(send(sd, buffer, strlen(buffer), 0) < 0)
         {
             std::cout << "Error enviando mensaje: " << strerror(errno) << "\n";
             return -errno;
         }; 
 
-        int bytes = recvfrom(sd, buffer, 80, 0, res->ai_addr, &res->ai_addrlen);
+        int bytes = recv(sd, buffer, 80, 0);
 
         if(bytes < 0){
             std::cout << "[recv] " << strerror(errno) << "\n";
