@@ -122,9 +122,9 @@ int main(int argc, char** argv)
     for(int i = 0; i < MAX_THREAD; ++i)
     {
         EJ6_thread* mT = new EJ6_thread(sd);
-        std::thread([&mT](){
-        mT->do_message();
-        delete mT;
+        std::thread([mT](){ // No referencia, si no se cambia
+            mT->do_message();
+            delete mT;
         }).detach();
     }
 
