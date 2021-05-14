@@ -23,7 +23,7 @@ int main(int argc, char** argv){
     hints.ai_family = AF_INET;
     hints.ai_socktype = SOCK_STREAM;
 
-    int rc = getaddrinfo(argv[1], "2557", &hints, &res); // Socket arbitrario
+    int rc = getaddrinfo(argv[1], argv[2], &hints, &res); // Socket arbitrario
 
     if (rc != 0)
     {
@@ -38,12 +38,6 @@ int main(int argc, char** argv){
         std::cerr << "[socket]: " << strerror(errno) << "\n";
         return -errno;
     }
-
-    if(getaddrinfo(argv[1], argv[2], &hints, &res) < 0)
-    {
-        std::cout << "[getaddrinfo]: " << strerror(errno) << "\n";
-        return -errno;
-    };
 
     char buffer[80];
 
