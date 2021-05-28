@@ -58,10 +58,45 @@ void ChatServer::do_messages()
          * para añadirlo al vector
          */
 
+        ChatMessage newMsg;
+        Socket* newSock;
+
+        socket.recv(newMsg, newSock); // Asigna mensaje y socket
+
         //Recibir Mensajes en y en función del tipo de mensaje
         // - LOGIN: Añadir al vector clients
         // - LOGOUT: Eliminar del vector clients
         // - MESSAGE: Reenviar el mensaje a todos los clientes (menos el emisor)
+
+        switch (newMsg.type)
+        {
+        case ChatMessage::LOGIN:
+        {
+            clients.push_back(std::move(std::make_unique<Socket>(*newSock)));      // Añade y mueve
+            break;
+        }
+        case ChatMessage::MESSAGE:
+        {
+            auto s = clients.begin();
+            while(s != clients.end()){   // Si es distinto envía
+                if(s->get() != newSock) socket.send(newMsg, *(s->get()));
+                ++s;
+            }
+            break;
+        }
+        case ChatMessage::LOGOUT:
+        {
+            auto s = clients.begin();
+            while(s != clients.end()){   // Si es igual lo borra
+                if(s->get() == newSock){
+                    clients.erase(s);
+                    s->release();
+                } 
+                ++s;
+            }
+            break;
+        }
+        }
     }
 }
 
