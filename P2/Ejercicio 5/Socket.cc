@@ -34,6 +34,8 @@ Socket::Socket(const char * address, const char * port):sd(-1)
     sa = *res->ai_addr;
     sa_len = res->ai_addrlen;
 
+    bind();
+
     freeaddrinfo(res);
 }
 
@@ -69,7 +71,7 @@ int Socket::send(Serializable& obj, const Socket& sock)
 
     //Enviar el objeto binario a sock usando el socket sd
 
-    if(sendto(sock.sd, obj.data(), obj.size(), 0, &sock.sa, sock.sa_len) < 0){
+    if(sendto(sd, obj.data(), obj.size(), 0, &sock.sa, sock.sa_len) < 0){
         std::cerr << "[sendto] " << strerror(errno) << "\n";
         return -1;
     }

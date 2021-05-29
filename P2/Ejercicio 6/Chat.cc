@@ -17,11 +17,11 @@ void ChatMessage::to_bin()
 
     tmp += 1;
 
-    memcpy(tmp, &nick, 8);
+    memcpy(tmp, nick.c_str(), 8);
 
     tmp += 8;
 
-    memcpy(tmp, &message, 80);
+    memcpy(tmp, message.c_str(), 80);
 }
 
 int ChatMessage::from_bin(char * bobj)
@@ -30,19 +30,17 @@ int ChatMessage::from_bin(char * bobj)
 
     memcpy(static_cast<void *>(_data), bobj, MESSAGE_SIZE);
 
-    //Reconstruir la clase usando el buffer _data
-
     char * tmp = _data;
 
     memcpy(&type, tmp, 1);
 
     tmp += 1;
 
-    memcpy(&nick, tmp, 8);
+    nick = tmp;
 
     tmp += 8;
 
-    memcpy(&message, tmp, 80);
+    message = tmp;
 
     return 0;
 }
@@ -72,33 +70,36 @@ void ChatServer::do_messages()
 
         switch (newMsg.type)
         {
-        case ChatMessage::LOGIN:
-        {
-            clients.push_back(std::move(std::make_unique<Socket>(*newSock)));      // Añade y mueve
-            break;
-        }
-        case ChatMessage::MESSAGE:
-        {
-            auto s = clients.begin();
-            while(s != clients.end()){   // Si es distinto envía
-                if(s->get() != newSock) socket.send(newMsg, *(s->get()));
-                ++s;
+            case ChatMessage::LOGIN:
+            {
+                std::cout << "CLIENT " << newMsg.nick << " CONNECTED\n";
+                clients.push_back(std::move(std::make_unique<Socket>(*newSock)));      // Añade y mueve
+                break;
             }
-            break;
-        }
-        case ChatMessage::LOGOUT:
-        {
-            auto s = clients.begin();
-            while(s != clients.end()){   // Si es igual lo borra
-                if(s->get() == newSock){
-                    clients.erase(s);
-                    s->release();
-                } 
-                ++s;
+            case ChatMessage::MESSAGE:
+            {
+                auto s = clients.begin();
+                while(s != clients.end()){   // Si es distinto envía
+                    if(!(*s->get() == *newSock)) socket.send(newMsg, *(s->get()));
+                    ++s;
+                }
+                break;
             }
-            break;
+            case ChatMessage::LOGOUT:
+            {
+                std::cout << "CLIENT " << newMsg.nick << " DISCONNECTED\n";
+                auto s = clients.begin();
+                while(s != clients.end()){   // Si es igual lo borra
+                    if(*s->get() == *newSock){
+                        clients.erase(s);
+                        s->release();
+                    } else ++s;
+                }
+                break;
+            }
         }
-        }
+
+        delete newSock;
     }
 }
 
