@@ -37,6 +37,7 @@ int ChatMessage::from_bin(char * bobj)
     tmp += 1;
 
     nick = tmp;
+    nick[7] = '\0'; // Asegurar que no hay error de fin de nick
 
     tmp += 8;
 

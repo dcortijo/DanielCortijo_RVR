@@ -84,7 +84,7 @@ bool operator== (const Socket &s1, const Socket &s2)
     //Comparar los campos sin_family, sin_addr.s_addr y sin_port
     //de la estructura sockaddr_in de los Sockets s1 y s2
 
-    struct sockaddr_in* convertido1 = (struct sockaddr_in*)&s1.sa;  // ¿Esta conversión es válida?
+    struct sockaddr_in* convertido1 = (struct sockaddr_in*)&s1.sa;
     struct sockaddr_in* convertido2 = (struct sockaddr_in*)&s2.sa;  
 
     //Retornar false si alguno difiere
